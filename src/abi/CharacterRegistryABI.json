@@ -1,0 +1,197 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "CharacterCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "health",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "hunger",
+        "type": "uint8"
+      }
+    ],
+    "name": "CharacterUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "characters",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "hairColor",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "hasGlasses",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "personality",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "health",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "hunger",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bool",
+        "name": "exists",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_hairColor",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "_hasGlasses",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "_personality",
+        "type": "string"
+      }
+    ],
+    "name": "createCharacter",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "getCharacter",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "hairColor",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "hasGlasses",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "personality",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "health",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "hunger",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct CharacterRegistry.Character",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_health",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_hunger",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateStats",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

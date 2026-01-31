@@ -1,18 +1,49 @@
 import { useState, useEffect } from 'react';
-import { useAccount, useSignMessage } from 'wagmi';
+import { useAccount, useSignMessage, useReadContract, useWriteContract } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import dynamic from 'next/dynamic';
+import { CHARACTER_REGISTRY_ABI, CHARACTER_REGISTRY_ADDRESS } from '@/config/contracts';
 
 const PhaserGame = dynamic(() => import('@/components/Game/PhaserGame'), { ssr: false });
 
 export default function Home() {
   const { isConnected, address } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const { writeContractAsync } = useWriteContract();
   
   const [apiToken, setApiToken] = useState('');
   const [characterName, setCharacterName] = useState('');
   const [character, setCharacter] = useState<any>(null);
   const [gameStarted, setGameStarted] = useState(false);
+
+  // Read Character from Contract
+  const { data: contractChar, isError: isReadError } = useReadContract({
+    address: CHARACTER_REGISTRY_ADDRESS,
+    abi: CHARACTER_REGISTRY_ABI,
+    functionName: 'getCharacter',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address && CHARACTER_REGISTRY_ADDRESS !== "0x0000000000000000000000000000000000000000"
+    }
+  });
+
+  useEffect(() => {
+    if (contractChar && (contractChar as any).exists) {
+      const charData = contractChar as any;
+      // Load character from chain
+      setCharacter({
+        id: address,
+        name: charData.name,
+        hairColor: charData.hairColor,
+        hasGlasses: charData.hasGlasses,
+        personality: charData.personality,
+        health: Number(charData.health),
+        hunger: Number(charData.hunger),
+        x: 400, // Spawn point
+        y: 300
+      });
+    }
+  }, [contractChar, address]);
 
   // Generate random character attributes
   const generateCharacter = async () => {
@@ -26,21 +57,42 @@ export default function Home() {
     }
     
     try {
-      // Signature to prove ownership/intent
-      await signMessageAsync({ message: `Generate My AI Life Character: ${characterName}` });
-      
       const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF'];
       const personalities = ['Friendly', 'Grumpy', 'Curious', 'Lazy', 'Energetic'];
+      
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const randomGlasses = Math.random() > 0.5;
+      const randomPersonality = personalities[Math.floor(Math.random() * personalities.length)];
+
+      // 1. Try to Write to Contract (If configured)
+      if (CHARACTER_REGISTRY_ADDRESS !== "0x0000000000000000000000000000000000000000") {
+          try {
+            await writeContractAsync({
+                address: CHARACTER_REGISTRY_ADDRESS,
+                abi: CHARACTER_REGISTRY_ABI,
+                functionName: 'createCharacter',
+                args: [characterName, randomColor, randomGlasses, randomPersonality],
+            });
+            console.log("Character created on chain!");
+          } catch (e) {
+              console.error("Contract write failed, falling back to local:", e);
+              // Fallback to signature if contract fails (e.g. user rejects or no gas)
+              await signMessageAsync({ message: `Generate My AI Life Character: ${characterName}` });
+          }
+      } else {
+          // 2. Fallback: Signature only (Local mode)
+          await signMessageAsync({ message: `Generate My AI Life Character: ${characterName}` });
+      }
       
       const newChar = {
         id: address,
         name: characterName,
-        hairColor: colors[Math.floor(Math.random() * colors.length)],
-        hasGlasses: Math.random() > 0.5,
-        personality: personalities[Math.floor(Math.random() * personalities.length)],
+        hairColor: randomColor,
+        hasGlasses: randomGlasses,
+        personality: randomPersonality,
         health: 100,
-        hunger: 0, // 0 = Not hungry, 100 = Starving
-        x: 400, // Center(ish) start
+        hunger: 0, 
+        x: 400, 
         y: 300
       };
       

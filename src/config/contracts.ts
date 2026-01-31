@@ -1,0 +1,6 @@
+import CharacterRegistryABI from '../abi/CharacterRegistryABI.json';
+
+export const CHARACTER_REGISTRY_ABI = CharacterRegistryABI;
+
+// REPLACE THIS WITH YOUR DEPLOYED CONTRACT ADDRESS ON BASE
+export const CHARACTER_REGISTRY_ADDRESS = "0x1cE035bB33f782FC890C99fA01471F80005a0d7A"; 
