@@ -190,43 +190,10 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player);
     this.player.setDepth(20); 
 
-    // 4. Create NPCs (Inside room)
+    // 4. Create Remote Players Group (Initially empty, to be populated by multiplayer logic)
     this.npcs = this.physics.add.group();
-    for (let i = 0; i < 5; i++) {
-      const npcSkin = this.characterTypes[Math.floor(Math.random() * this.characterTypes.length)];
-      
-      let spawnX, spawnY;
-      let attempts = 0;
-      do {
-          spawnX = (roomX + 2 + Math.random() * (roomW - 4)) * 16;
-          spawnY = (roomY + 2 + Math.random() * (roomH - 4)) * 16;
-          attempts++;
-      } while (attempts < 10 && Phaser.Math.Distance.Between(spawnX, spawnY, 320, 240) < 30);
-      
-      const npc = this.createCharacterSprite(spawnX, spawnY, npcSkin, 3);
-      npc.setPushable(true);
-      npc.setDepth(20); 
-      this.npcs.add(npc);
-      
-      // Set NPC Attributes (Random)
-      npc.setData('skin', npcSkin);
-      const npcName = `${npcSkin} ${i+1}`;
-      npc.setData('name', npcName);
-      npc.setData('personality', ['Grumpy', 'Happy', 'Shy', 'Curious'][Math.floor(Math.random() * 4)]);
-      npc.setData('health', Math.floor(Math.random() * 50) + 50); // 50-100
-      npc.setData('hunger', Math.floor(Math.random() * 50)); // 0-50
-
-      // NPC Name Tag
-      const npcNameTag = this.add.text(0, 0, npcName, {
-        fontSize: '8px',
-        color: '#cccccc',
-        stroke: '#000000',
-        strokeThickness: 2,
-        fontFamily: 'monospace'
-      }).setOrigin(0.5, 1);
-      npc.setData('nameTag', npcNameTag);
-      npcNameTag.setDepth(21);
-    }
+    
+    // NOTE: NPCs removed as per request. Only real users (via multiplayer sync) will appear here.
 
     // 5. Collisions
     this.physics.add.collider(this.player, this.npcs, this.handleCollision, undefined, this);
@@ -346,68 +313,9 @@ export class GameScene extends Phaser.Scene {
         }
     }).catch(console.error);
     
-    // 2. NPC Decisions (Round Robin - Update 1 NPC per tick)
-    const npcsArray = this.npcs.getChildren();
-    if (npcsArray.length > 0) {
-        this.npcUpdateIndex = (this.npcUpdateIndex + 1) % npcsArray.length;
-        const currentNPC = npcsArray[this.npcUpdateIndex];
-        
-        // NPC Context
-        const npcNearby = [this.player, ...npcsArray].filter(other => 
-            other !== currentNPC && Phaser.Math.Distance.Between(currentNPC.x, currentNPC.y, other.x, other.y) < 80
-        ).map(other => other === this.player ? this.playerData.name : other.getData('name'));
-        
-        const incoming = currentNPC.getData('incomingMessage');
-
-        getAIDecision(this.apiToken, {
-            name: currentNPC.getData('name'),
-            health: currentNPC.getData('health'),
-            hunger: currentNPC.getData('hunger'),
-            personality: currentNPC.getData('personality'),
-            x: currentNPC.x / 16,
-            y: currentNPC.y / 16,
-            nearby: npcNearby,
-            incomingMessage: incoming // Pass incoming message
-        }).then(decision => {
-            if (incoming) currentNPC.setData('incomingMessage', null); // Clear message
-
-            if (!currentNPC.active) return;
-            const speed = 30; // NPCs are slower
-            currentNPC.setVelocity(0);
-
-            if (decision.action === 'move') {
-                if (decision.direction === 'up') currentNPC.setVelocityY(-speed);
-                else if (decision.direction === 'down') currentNPC.setVelocityY(speed);
-                else if (decision.direction === 'left') currentNPC.setVelocityX(-speed);
-                else if (decision.direction === 'right') currentNPC.setVelocityX(speed);
-            }
-            else if (decision.action === 'talk') {
-                // NPC talks (Reply or Initiate)
-                this.isTalking = true;
-                currentNPC.setVelocity(0);
-                
-                const content = decision.content || "...";
-                const name = currentNPC.getData('name');
-                const personality = currentNPC.getData('personality');
-                const targetName = decision.target;
-                
-                const fullText = `${name} (${personality}):\n\n"${content}"\n\n(Click to close)`;
-                this.events.emit('show-dialogue', { text: fullText });
-                
-                // Send Message to Target (Player or other NPC)
-                if (targetName) {
-                    if (targetName === this.playerData.name) {
-                        this.player.setData('incomingMessage', { sender: name, content: content });
-                    } else {
-                        const targetNPC = this.npcs.getChildren().find((n: any) => n.getData('name') === targetName);
-                        if (targetNPC) {
-                            targetNPC.setData('incomingMessage', { sender: name, content: content });
-                        }
-                    }
-                }
-            }
-        }).catch(console.error);
-    }
+    // 2. NPC Decisions (Skipped as no NPCs)
+    // const npcsArray = this.npcs.getChildren();
+    // ...
   }
 
   async handleCollision(player: any, npc: any) {
