@@ -23,7 +23,7 @@ export default function Home() {
     functionName: 'getCharacter',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!address && CHARACTER_REGISTRY_ADDRESS !== "0x0000000000000000000000000000000000000000"
+      enabled: !!address && (CHARACTER_REGISTRY_ADDRESS as string) !== "0x0000000000000000000000000000000000000000"
     }
   });
 
@@ -65,7 +65,7 @@ export default function Home() {
       const randomPersonality = personalities[Math.floor(Math.random() * personalities.length)];
 
       // 1. Try to Write to Contract (If configured)
-      if (CHARACTER_REGISTRY_ADDRESS !== "0x0000000000000000000000000000000000000000") {
+      if ((CHARACTER_REGISTRY_ADDRESS as string) !== "0x0000000000000000000000000000000000000000") {
           try {
             await writeContractAsync({
                 address: CHARACTER_REGISTRY_ADDRESS,

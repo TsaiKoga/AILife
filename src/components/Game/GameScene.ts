@@ -219,7 +219,10 @@ export class GameScene extends Phaser.Scene {
 
   playWalkAnimation(sprite: Phaser.Physics.Arcade.Sprite) {
     const skin = sprite.getData('skin') || 'Adam'; 
-    const velocity = sprite.body.velocity;
+    const body = sprite.body as Phaser.Physics.Arcade.Body;
+    if (!body) return;
+    
+    const velocity = body.velocity;
     const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
 
     if (speed < 0.1) {
