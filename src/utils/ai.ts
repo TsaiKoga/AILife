@@ -1,3 +1,4 @@
+import OpenAI from 'openai';
 import { getMBTiDescription } from './mbti';
 
 export interface GameState {

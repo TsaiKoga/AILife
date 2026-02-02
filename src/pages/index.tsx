@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useSignMessage, useReadContract, useWriteContract } from 'wagmi';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { getRandomMBTI } from '@/utils/mbti';
 import dynamic from 'next/dynamic';
 import { CHARACTER_REGISTRY_ABI, CHARACTER_REGISTRY_ADDRESS } from '@/config/contracts';
@@ -58,7 +59,9 @@ export default function Home() {
     
     try {
       const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF'];
-            const randomPersonality = getRandomMBTI();
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const randomGlasses = Math.random() > 0.5;
+      const randomPersonality = getRandomMBTI();
 
       // 1. Try to Write to Contract (If configured)
       if ((CHARACTER_REGISTRY_ADDRESS as string) !== "0x0000000000000000000000000000000000000000") {

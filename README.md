@@ -20,12 +20,13 @@ AI Life is an experimental Web3 pixel art RPG where your character is powered by
     - **Built-in Wallet**: Each character comes with its own embedded wallet functionality (WIP).
     - The system generates random attributes for you:
         - **Appearance**: Hair color, Glasses.
-        - **Personality**: Friendly, Grumpy, Curious, etc.
+        - **Personality**: Automatically assigned **MBTI Personality** (e.g., INTJ - Architect, ENFP - Campaigner) with detailed traits.
         - **Stats**: Health (100), Hunger (0).
 
 3.  **Awaken the AI (唤醒 AI)**:
     - Input your **DeepSeek API Token**.
-    - The AI takes control of your character. It receives your character's profile (Name, Personality, Stats) and sensory data (Location, Nearby Players).
+    - The AI takes control of your character. It receives your character's profile (Name, MBTI Personality, Stats) and sensory data.
+    - **Chain of Thought**: The AI performs an internal "Chain of Thought" process to evaluate its state and environment before taking action.
 
 4.  **Observation & Interaction (观察与交互)**:
     - **Autonomous Movement**: The AI decides where to walk based on its internal state (e.g., exploring, looking for food).
@@ -42,8 +43,9 @@ AI Life is an experimental Web3 pixel art RPG where your character is powered by
 -   **Web3 Integration**: Wagmi + RainbowKit (Base Chain).
 -   **Smart Contract**: Solidity (On-Chain Character Registry).
 -   **AI Core**: OpenAI SDK configured for DeepSeek API.
-    -   **Decision Engine**: Evaluates state every second to output JSON commands (`MOVE`, `TALK`, `STOP`).
-    -   **Dialogue Engine**: Generates context-aware conversations in Chinese.
+    -   **MBTI System**: Characters have distinct 16 MBTI personalities affecting their behavior and dialogue style.
+    -   **Decision Engine**: Uses "Chain of Thought" reasoning to analyze environment (Time, Location, Hunger) and output JSON commands.
+    -   **Dialogue Engine**: Generates context-aware conversations in Chinese, consistent with the character's MBTI persona.
 -   **Assets**: Modern Interiors (Limezu) 16x16 Pixel Art.
 
 ## 📂 Directory Structure (目录结构)
